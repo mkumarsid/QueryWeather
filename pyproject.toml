@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "query-weather"
+version = "0.0.1"
+description = "An sensor based weather query system"
+authors = ["mkumar <mkumar.sid@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+httpx = "^0.25.0"
+prefect = "^2.13.4"
+python-dotenv = "^1.0.0"
+pandas = "1.5.3"
+fastapi = "^0.103.2"
+uvicorn = "^0.23.2"
+streamlit = "^1.27.2"
+plost = "^0.2.5"
+streamlit-folium = "^0.15.0"
+plotly = "^5.17.0"
+streamlit-plotly-events = "^0.0.6"
+duckdb = ">=1.2.1,<2.0.0"
+numpy = "1.24.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
