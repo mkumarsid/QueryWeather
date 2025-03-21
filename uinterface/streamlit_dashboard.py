@@ -13,11 +13,11 @@ st.sidebar.header("Query Options")
 tab = st.sidebar.radio("Choose Endpoint", ["Sensors", "Average Metrics", "Metric Stats"])
 
 if tab == "Sensors":
-    st.subheader("🔍 Sensor List")
+    st.subheader("🔍 Sensor List (with latest readings)")
     response = requests.get(f"{API_URL}/sensors")
     if response.status_code == 200:
         sensors = response.json()
-        st.dataframe(sensors)
+        st.dataframe(sensors)  # This will now include Temperature, Humidity, WindSpeed
     else:
         st.error("Failed to fetch sensor data")
 

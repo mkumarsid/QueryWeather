@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  weather:
+    container_name: query-weather-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app # mount your project root into the container
+    ports:
+      - "8000:8000" # FastAPI (Uvicorn)
+      - "8501:8501" # Streamlit
+    command: >
+      bash -c "uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload &
+           streamlit run uinterface/streamlit_dashboard.py --server.port 8501 --server.address 0.0.0.0"
+
+    restart: always

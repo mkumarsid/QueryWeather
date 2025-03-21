@@ -83,11 +83,29 @@ class WeatherDB:
             );
         """)
 
+    # def get_sensor_details(self, station_ids=None, table_name='weather'):
+    #     query = f"SELECT DISTINCT station_id, city, country FROM {table_name}"
+    #     if station_ids:
+    #         ids = ','.join([f"'{sid}'" for sid in station_ids])
+    #         query += f" WHERE station_id IN ({ids})"
+    #     return self.con.execute(query).fetchdf()
+    
     def get_sensor_details(self, station_ids=None, table_name='weather'):
-        query = f"SELECT DISTINCT station_id, city, country FROM {table_name}"
+        """
+        Returns sensor details along with the latest reading for Temperature, Humidity, and WindSpeed.
+        """
+        query = f"""
+            SELECT t1.station_id, t1.city, t1.country, t1.Temperature, t1.Humidity, t1.WindSpeed
+            FROM {table_name} t1
+            JOIN (
+                SELECT station_id, MAX(Datetime) as max_dt
+                FROM {table_name}
+                GROUP BY station_id
+            ) t2 ON t1.station_id = t2.station_id AND t1.Datetime = t2.max_dt
+        """
         if station_ids:
             ids = ','.join([f"'{sid}'" for sid in station_ids])
-            query += f" WHERE station_id IN ({ids})"
+            query += f" WHERE t1.station_id IN ({ids})"
         return self.con.execute(query).fetchdf()
 
     def get_metrics_average(self, metrics, start_date=None, end_date=None, table_name='weather'):

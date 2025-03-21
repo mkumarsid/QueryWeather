@@ -1,9 +1,21 @@
+
+import logging
 from fastapi import APIRouter, Query, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import date
 from app.db.duck_db_utils import WeatherDB, WeatherMetric
 from fastapi import APIRouter, Query, HTTPException, Body
+
+
+
+# Configure logging: set level, format, and optionally file handler
+logging.basicConfig(
+    level=logging.INFO, 
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
+
 router = APIRouter()
 db = WeatherDB()
 from pydantic import BaseModel, Field
@@ -21,6 +33,10 @@ class StatQuery(BaseModel):
     start_date: Optional[date] = Field(example="2025-03-18")
     end_date: Optional[date] = Field(example="2025-03-21")
     
+# @router.get("/sensors")
+# def get_sensors(station_ids: Optional[List[str]] = Query(default=None)):
+#     return db.get_sensor_details(station_ids).to_dict(orient="records")
+
 @router.get("/sensors")
 def get_sensors(station_ids: Optional[List[str]] = Query(default=None)):
     return db.get_sensor_details(station_ids).to_dict(orient="records")

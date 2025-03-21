@@ -69,3 +69,14 @@ def test_post_metric():
     response = client.post("/metrics", json=payload)
     assert response.status_code == 200
     assert response.json()["status"] == "success"
+
+### Security Testing
+
+def test_injection_attack_on_average_metrics():
+    malicious_payload = {
+        "metrics": ["Temperature'; DROP TABLE weather;--"],
+        "start_date": "2025-03-20",
+        "end_date": "2025-03-21"
+    }
+    response = client.get("/metrics/average", params=malicious_payload)
+    assert response.status_code == 400

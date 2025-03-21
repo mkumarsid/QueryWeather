@@ -100,3 +100,5 @@ if __name__ == "__main__":
     
     ingestor = WeatherIngestor(api_key=API_KEY, city=CITY, country=COUNTRY, units="metric")
     ingestor.run()
+
+
