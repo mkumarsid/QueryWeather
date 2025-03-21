@@ -26,5 +26,6 @@ jobs:
           pip install pytest
 
       - name: Run tests
-        run: |
-          pytest test_weather_api.py
+        env:
+          PYTHONPATH: .
+        run: pytest tests/test_weather_api.py
