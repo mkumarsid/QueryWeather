@@ -4,15 +4,16 @@ import os
 from datetime import datetime
 from app.db.duck_db_utils import WeatherDB, WeatherMetric
 
-# Add project root to path so that app module is found
+# Add project root to path so that the app module is found
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 class WeatherIngestor:
     def __init__(self, api_key: str, city: str, country: str, units: str = "metric"):
-        self.api_key = api_key
-        self.city = city
-        self.country = country
-        self.units = units
+        # Basic input sanitization: strip whitespace from parameters
+        self.api_key = api_key.strip()
+        self.city = city.strip()
+        self.country = country.strip()
+        self.units = units.strip()
         self.db = WeatherDB()
         self.current_url = f"https://api.openweathermap.org/data/2.5/weather?q={self.city}&units={self.units}&appid={self.api_key}"
         self.forecast_url = f"https://api.openweathermap.org/data/2.5/forecast?q={self.city}&units={self.units}&appid={self.api_key}"
@@ -26,7 +27,9 @@ class WeatherIngestor:
         dt = datetime.fromtimestamp(current["dt"])
         
         # Check if this current entry already exists
-        exists = self.db.con.execute(f"SELECT COUNT(*) FROM weather WHERE Datetime = '{dt}'").fetchone()[0]
+        exists = self.db.con.execute(
+            f"SELECT COUNT(*) FROM weather WHERE Datetime = '{dt}'"
+        ).fetchone()[0]
         if exists:
             print(f"⏭️ Skipping current weather — entry already exists for {dt}")
             return
@@ -62,7 +65,9 @@ class WeatherIngestor:
         for entry in entries:
             dt = datetime.fromtimestamp(entry["dt"])
             # Skip if record exists for this Datetime
-            exists = self.db.con.execute(f"SELECT COUNT(*) FROM weather WHERE Datetime = '{dt}'").fetchone()[0]
+            exists = self.db.con.execute(
+                f"SELECT COUNT(*) FROM weather WHERE Datetime = '{dt}'"
+            ).fetchone()[0]
             if exists:
                 print(f"⏭️ Skipping existing forecast entry at {dt}")
                 continue
@@ -91,7 +96,6 @@ class WeatherIngestor:
         self.ingest_forecast()
         self.db.close()
 
-
 if __name__ == "__main__":
     # Use your public API key and desired parameters
     API_KEY = "5f416c6f2c4d94b658cb2be255c8c8c0"  # Replace with your actual key
@@ -100,5 +104,3 @@ if __name__ == "__main__":
     
     ingestor = WeatherIngestor(api_key=API_KEY, city=CITY, country=COUNTRY, units="metric")
     ingestor.run()
-
-

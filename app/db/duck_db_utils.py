@@ -90,23 +90,79 @@ class WeatherDB:
     #         query += f" WHERE station_id IN ({ids})"
     #     return self.con.execute(query).fetchdf()
     
-    def get_sensor_details(self, station_ids=None, table_name='weather'):
+    # def get_sensor_details(self, station_ids=None, table_name='weather'):
+    #     """
+    #     Returns sensor details along with the latest reading for Temperature, Humidity, and WindSpeed.
+    #     """
+    #     query = f"""
+    #         SELECT t1.station_id, t1.city, t1.country, t1.Temperature, t1.Humidity, t1.WindSpeed
+    #         FROM {table_name} t1
+    #         JOIN (
+    #             SELECT station_id, MAX(Datetime) as max_dt
+    #             FROM {table_name}
+    #             GROUP BY station_id
+    #         ) t2 ON t1.station_id = t2.station_id AND t1.Datetime = t2.max_dt
+    #     """
+    #     if station_ids:
+    #         ids = ','.join([f"'{sid}'" for sid in station_ids])
+    #         query += f" WHERE t1.station_id IN ({ids})"
+    #     return self.con.execute(query).fetchdf()
+    
+    from datetime import datetime, timedelta
+
+    from datetime import datetime, timedelta
+    import pandas as pd
+
+    def get_sensor_details(self, station_ids=None, table_name='weather', refresh_threshold_minutes: int = 10):
         """
-        Returns sensor details along with the latest reading for Temperature, Humidity, and WindSpeed.
+        Returns sensor details along with the latest reading for Temperature, Humidity, WindSpeed,
+        and the date (DataDate) for which the data was fetched.
+        If the latest record is older than refresh_threshold_minutes, it refreshes current weather data.
         """
         query = f"""
-            SELECT t1.station_id, t1.city, t1.country, t1.Temperature, t1.Humidity, t1.WindSpeed
+            SELECT 
+                t1.station_id, 
+                t1.city, 
+                t1.country, 
+                t1.Temperature, 
+                t1.Humidity, 
+                t1.WindSpeed,
+                CAST(t1.Datetime AS DATE) AS DataDate, 
+                t1.Datetime
             FROM {table_name} t1
             JOIN (
-                SELECT station_id, MAX(Datetime) as max_dt
+                SELECT station_id, MAX(Datetime) AS max_dt
                 FROM {table_name}
                 GROUP BY station_id
-            ) t2 ON t1.station_id = t2.station_id AND t1.Datetime = t2.max_dt
+            ) t2 
+            ON t1.station_id = t2.station_id AND t1.Datetime = t2.max_dt
         """
         if station_ids:
             ids = ','.join([f"'{sid}'" for sid in station_ids])
             query += f" WHERE t1.station_id IN ({ids})"
-        return self.con.execute(query).fetchdf()
+
+        result = self.con.execute(query).fetchdf()
+
+        # Determine if the latest data is stale
+        if result.empty:
+            latest_dt = None
+        else:
+            latest_dt = result['Datetime'].max()
+            if not isinstance(latest_dt, datetime):
+                latest_dt = pd.to_datetime(latest_dt)
+
+        # If no data exists or data is stale, trigger ingestion of current weather data
+        if (latest_dt is None) or ((datetime.utcnow() - latest_dt).total_seconds() > refresh_threshold_minutes * 60):
+            from app.ingestion.ingest_openweather import WeatherIngestor
+            # Replace with your actual API key and parameters if needed
+            API_KEY = "5f416c6f2c4d94b658cb2be255c8c8c0"
+            ingestor = WeatherIngestor(api_key=API_KEY, city="Dublin", country="Ireland", units="metric")
+            ingestor.ingest_current_weather()
+            # Re-run the query after ingestion
+            result = self.con.execute(query).fetchdf()
+
+        return result
+
 
     def get_metrics_average(self, metrics, start_date=None, end_date=None, table_name='weather'):
         start_date, end_date = self._normalize_date_range(start_date, end_date)

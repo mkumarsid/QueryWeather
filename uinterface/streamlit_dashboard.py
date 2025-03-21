@@ -13,7 +13,7 @@ st.sidebar.header("Query Options")
 tab = st.sidebar.radio("Choose Endpoint", ["Sensors", "Average Metrics", "Metric Stats"])
 
 if tab == "Sensors":
-    st.subheader("🔍 Sensor List (with latest readings)")
+    st.subheader("🔍 Sensor List (with Latest Readings and Date)")
     response = requests.get(f"{API_URL}/sensors")
     if response.status_code == 200:
         sensors = response.json()
