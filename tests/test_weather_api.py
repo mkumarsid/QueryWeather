@@ -1,10 +1,29 @@
 import pytest
+import pandas as pd
 from fastapi.testclient import TestClient
-#from app.main import app
-
 from app.main import app
+from app.db.duck_db_utils import WeatherDB
 
 client = TestClient(app)
+
+# --- Setup sample data before tests ---
+def setup_module(module):
+    db = WeatherDB()
+    db._create_table_if_not_exists("weather")
+
+    # Insert dummy test row
+    df = pd.DataFrame([{
+        "station_id": "TEST_001",
+        "city": "Testville",
+        "country": "Nowhere",
+        "Datetime": "2025-03-20T12:00:00",
+        "Temperature": 22.5,
+        "Humidity": 60,
+        "WindSpeed": 3.2,
+        "WeatherDescription": "sunny"
+    }])
+    db.con.register("test_df", df)
+    db.con.execute("INSERT INTO weather SELECT * FROM test_df")
 
 # --- Sensor endpoint ---
 def test_get_sensors():
