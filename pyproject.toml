@@ -21,6 +21,11 @@ streamlit-plotly-events = "^0.0.6"
 duckdb = ">=1.2.1,<2.0.0"
 numpy = "1.24.4"
 pytest = "^8.3.5"
+opentelemetry-api = "^1.31.1"
+opentelemetry-sdk = "^1.31.1"
+opentelemetry-instrumentation-fastapi = "^0.52b1"
+opentelemetry-exporter-jaeger = "^1.21.0"
+folium = "^0.19.5"
 
 [build-system]
 requires = ["poetry-core"]

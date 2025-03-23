@@ -6,7 +6,7 @@ from typing import List, Optional
 from datetime import date
 from app.db.duck_db_utils import WeatherDB, WeatherMetric
 from fastapi import APIRouter, Query, HTTPException, Body
-
+from datetime import timedelta
 
 
 # Configure logging: set level, format, and optionally file handler
@@ -32,31 +32,14 @@ class StatQuery(BaseModel):
     stat: str = Field(example="max")
     start_date: Optional[date] = Field(example="2025-03-18")
     end_date: Optional[date] = Field(example="2025-03-21")
-    
-# @router.get("/sensors")
-# def get_sensors(station_ids: Optional[List[str]] = Query(default=None)):
-#     return db.get_sensor_details(station_ids).to_dict(orient="records")
 
 @router.get("/sensors")
 def get_sensors(station_ids: Optional[List[str]] = Query(default=None)):
     return db.get_sensor_details(station_ids).to_dict(orient="records")
 
-# @router.get("/metrics/average")
-# def get_average_metrics(query: MetricQuery):
-#     try:
-#         print("📥 /metrics/average request:", query)
-#         for metric in query.metrics:
-#             if metric not in ALLOWED_METRICS:
-#                 raise HTTPException(status_code=400, detail=f"Invalid metric '{metric}'. Allowed: {ALLOWED_METRICS}")
-#         result = db.get_metrics_average(query.metrics, query.start_date, query.end_date)
-#         return result.to_dict(orient="records")
-#     except Exception as e:
-#         print("❌ Error in /metrics/average:", str(e))
-#         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
-
 @router.get("/metrics/average")
 def get_average_metrics(
-    metrics: List[str] = Query(..., example=["Temperature", "Humidity"]),
+    metrics: List[str] = Query(..., example=["Temperature", "Humidity", "WindSpeed"]),
     start_date: Optional[date] = Query(None),
     end_date: Optional[date] = Query(None),
 ):
@@ -69,10 +52,32 @@ def get_average_metrics(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
+@router.get("/metrics/data")
+def get_raw_metrics(
+    metrics: List[str] = Query(..., example=["Temperature", "Humidity", "WindSpeed"]),
+    start_date: Optional[date] = Query(None),
+    end_date: Optional[date] = Query(None)
+):
+    try:
+        for metric in metrics:
+            if metric not in ALLOWED_METRICS:
+                raise HTTPException(status_code=400, detail=f"Invalid metric '{metric}'")
+        from datetime import datetime, timedelta, timezone
+
+        if not end_date:
+            end_date = datetime.now(timezone.utc).date()
+        if not start_date:
+            start_date = end_date - timedelta(days=30)
+
+        result = db.get_raw_metrics(metrics, start_date, end_date)
+        return result.to_dict(orient="records")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+
 
 @router.get("/metrics/stat")
 def get_metric_stat(
-    metric: str = Query(..., example="Temperature"),
+    metric: str = Query(..., example=["Temperature", "Humidity", "WindSpeed"]),
     stat: str = Query(..., example="max"),
     start_date: Optional[date] = Query(None),
     end_date: Optional[date] = Query(None),
@@ -84,25 +89,6 @@ def get_metric_stat(
         return result.to_dict(orient="records")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
-
-
-# @router.get("/metrics/stat")
-# #def get_metric_stat(query: StatQuery):
-# def get_metric_stat(
-#     metric: str = Query(..., example="Temperature"),
-#     stat: str = Query(..., example="max"),
-#     start_date: Optional[date] = Query(None),
-#     end_date: Optional[date] = Query(None)
-# ):
-#     try:
-#         print("📥 /metrics/stat request:", query)
-#         if query.metric not in ALLOWED_METRICS:
-#             raise HTTPException(status_code=400, detail=f"Invalid metric '{query.metric}'. Allowed: {ALLOWED_METRICS}")
-#         result = db.get_metric_stats(query.metric, query.stat, query.start_date, query.end_date)
-#         return result.to_dict(orient="records")
-#     except Exception as e:
-#         print("❌ Error in /metrics/stat:", str(e))
-#         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
 @router.post("/metrics")
 def post_weather_metric(metric: WeatherMetric):
