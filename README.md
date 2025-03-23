@@ -38,7 +38,7 @@ QueryWeather/ ├── app/ # FastAPI backend ├── uinterface/ # Streamlit
 #### 1️⃣ Clone the Repo
 
 ```bash
-git clone https://github.com/your-username/QueryWeather.git
+git clone https://github.com/mkumarsid/QueryWeather.git
 cd QueryWeather
 ```
 
