@@ -1,46 +1,129 @@
-# Query Weather from Live API Sensors
+# 🌤️ QueryWeather
 
-This project goal is to create an IoT platform to Query Weather information from scratch using Modern Data Stack ( DuckDB , FastAPI, Streamlit)
+A modern weather monitoring system built using **FastAPI**, **Streamlit**, and **DuckDB**, wrapped in a lightweight **Dockerized** architecture.
 
-![IoT Platform](images/SystemDiagram.png "Modern Data Stack!")
+> Real-time and historical weather metrics dashboard with interactive visualizations.
 
-# Pre-requisites
+## ![Query Weather](images/SystemDiagram.png "Query Weather")
 
-- Prefect Cloud account
-- Open Weather Map Account
-- Open Weather API URL and Key
-- Docker Desktop
-- [FastAPI](https://fastapi.tiangolo.com/)
-- [Streamlit](https://streamlit.io/)
+## 🚀 Features
 
-# How to Run
+- 🛰️ Fetch live weather data via OpenWeatherMap API
+- 📦 Store structured weather data in DuckDB (embedded)
+- 🔍 Query metrics like temperature, humidity, windspeed (with stats & history)
+- 📊 Visualize data via an interactive Streamlit dashboard
+- 🐳 Dockerized for ease of deployment
 
-1. Install pdm
+---
 
-   `$ curl -sSLO https://pdm-project.org/install-pdm.py `
+## 🛠️ Tech Stack
 
-   `$ python3 install-pdm.py [options]`
+- **Backend**: FastAPI
+- **Frontend**: Streamlit
+- **Database**: DuckDB
+- **API Source**: OpenWeatherMap
+- **Deployment**: Docker + Docker Compose
+- **Packaging**: Poetry
 
-2. Install dependencies
+---
 
-   `$ pdm install`
+## 🧱 Project Structure
 
-3. Activate virtual environment
+QueryWeather/ ├── app/ # FastAPI backend ├── uinterface/ # Streamlit frontend ├── ingestion/ # Weather ingestion logic ├── data/ # CSV & database files ├── Dockerfile ├── docker-compose.yml ├── pyproject.toml
 
-   `$ eval $(pdm venv activate)`
+---
 
-4. Create '.env' variable inside root directory by renaming .sample-env and then provide your credentials
+### ⚙️ Local Setup (with Poetry)
 
-5. Run docker from root directory
+#### 1️⃣ Clone the Repo
 
-   `$ docker compose up`
+```bash
+git clone https://github.com/your-username/QueryWeather.git
+cd QueryWeather
+```
 
-# How To Use
+#### 2️⃣ Install Poetry
 
-1. API - http://localhost:8000/docs
+> Poetry is used for dependency and environment management.
 
-   ![FastAPI](images/fastapi.png "FastAPI")
+```bash
+curl -sSL https://install.python-poetry.org | python3 -
+```
 
-2. Web UI (Streamlit App) - http://localhost:8015
+If that doesn't work, see full docs: https://python-poetry.org/docs/#installation
 
-   ![Streamlit App](images/streamlit.png "Streamlit App")
+#### 3️⃣ Install Dependencies
+
+```bash
+poetry install
+```
+
+#### 4️⃣ Activate Virtual Environment
+
+```bash
+poetry shell
+```
+
+#### 5️⃣ Run the App Locally
+
+```bash
+python scripts/run_local.py
+```
+
+You should now be able to access:
+
+- ✅ FastAPI: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- 📈 Streamlit Dashboard: [http://127.0.0.1:8501](http://127.0.0.1:8501)
+
+---
+
+### 🐳 Run with Docker (Recommended)
+
+#### 1️⃣ Build and Run
+
+```bash
+docker-compose up --build
+```
+
+#### 2️⃣ Access Services
+
+- 🚀 FastAPI Docs: http://localhost:8000/docs
+- 📈 Streamlit UI: http://localhost:8501
+
+---
+
+### 🔑 API Configuration
+
+This project pulls data from [OpenWeatherMap](https://openweathermap.org/api).
+
+Update the `API_KEY` in:
+
+```
+ingestion/ingest_openweather.py
+```
+
+Or make it configurable via `.env` support if needed.
+
+---
+
+### 📁 Data Directory
+
+- Your ingested/historical `.csv` files → stored in `data/`
+- Local DuckDB database → `weather_data.db`
+
+---
+
+### ✅ TODOs
+
+- [ ] Add CRON / Prefect job for scheduled ingestion
+- [ ] Improve error logging for ingestion
+- [ ] Push Docker image to GitHub Container Registry
+- [ ] Add authentication for Streamlit
+
+---
+
+### 🤝 Contributing
+
+Have suggestions or want to contribute? Feel free to fork and submit a pull request.
+
+---
