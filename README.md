@@ -38,7 +38,7 @@ QueryWeather/ ├── app/ # FastAPI backend ├── uinterface/ # Streamlit
 ### 1️⃣ Clone the Repo
 
 ```bash
-git clone https://github.com/your-username/QueryWeather.git
+git clone https://github.com/mkumarsid/QueryWeather.git
 cd QueryWeather
 
 ```
@@ -49,4 +49,20 @@ cd QueryWeather
 
 ```bash
 docker-compose up --build
+```
+
+### Setup using Python Script (Cross-Platform)
+
+Run this once to install Poetry, create a virtual environment, and install dependencies:
+
+```bash
+python setup_env.py
+
+
+# Activate the environment
+source .venv/bin/activate   # macOS/Linux
+.venv\Scripts\activate      # Windows
+
+# Run the app locally
+poetry run python scripts/run_local.py
 ```
