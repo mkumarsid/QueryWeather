@@ -33,9 +33,9 @@ QueryWeather/ ├── app/ # FastAPI backend ├── uinterface/ # Streamlit
 
 ---
 
-## ⚙️ Local Setup (with Poetry)
+## Local Setup (with Poetry)
 
-### 1️⃣ Clone the Repo
+### Clone the Repo
 
 ```bash
 git clone https://github.com/mkumarsid/QueryWeather.git
@@ -45,7 +45,7 @@ cd QueryWeather
 
 ### 🐳 Run with Docker (Recommended)
 
-#### 1️⃣ Build and Run
+#### Build and Run
 
 ```bash
 docker-compose up --build
@@ -66,3 +66,8 @@ source .venv/bin/activate   # macOS/Linux
 # Run the app locally
 poetry run python scripts/run_local.py
 ```
+
+#### Access Services
+
+- 🚀 FastAPI Docs: http://localhost:8000/docs
+- 📈 Streamlit UI: http://localhost:8501
