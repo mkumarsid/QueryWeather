@@ -42,3 +42,11 @@ git clone https://github.com/your-username/QueryWeather.git
 cd QueryWeather
 
 ```
+
+### 🐳 Run with Docker (Recommended)
+
+#### 1️⃣ Build and Run
+
+```bash
+docker-compose up --build
+```
