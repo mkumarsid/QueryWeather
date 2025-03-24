@@ -29,51 +29,14 @@ A modern weather monitoring system built using **FastAPI**, **Streamlit**, and *
 
 ## 🧱 Project Structure
 
-QueryWeather/ ├── app/ # FastAPI backend ├── uinterface/ # Streamlit frontend ├── ingestion/ # Weather ingestion logic ├── data/ # CSV & database files ├── Dockerfile ├── docker-compose.yml ├── pyproject.toml
-
----
-
-### ⚙️ Local Setup (with Poetry)
-
-#### 1️⃣ Clone the Repo
-
-```bash
-git clone https://github.com/mkumarsid/QueryWeather.git
-cd QueryWeather
-```
-
-#### 2️⃣ Install Poetry
-
-> Poetry is used for dependency and environment management.
-
-```bash
-curl -sSL https://install.python-poetry.org | python3 -
-```
-
-If that doesn't work, see full docs: https://python-poetry.org/docs/#installation
-
-#### 3️⃣ Install Dependencies
-
-```bash
-poetry install
-```
-
-#### 4️⃣ Activate Virtual Environment
-
-```bash
-poetry shell
-```
-
-#### 5️⃣ Run the App Locally
-
-```bash
-python scripts/run_local.py
-```
-
-You should now be able to access:
-
-- ✅ FastAPI: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-- 📈 Streamlit Dashboard: [http://127.0.0.1:8501](http://127.0.0.1:8501)
+QueryWeather/
+├── app/ # FastAPI backend
+├── uinterface/ # Streamlit frontend
+├── ingestion/ # Weather ingestion logic
+├── data/ # CSV & database files
+├── Dockerfile
+├── docker-compose.yml
+├── pyproject.toml
 
 ---
 
@@ -85,12 +48,36 @@ You should now be able to access:
 docker-compose up --build
 ```
 
-#### 2️⃣ Access Services
+### ⚙️ Local Setup (with Poetry)
+
+#### Clone the Repo
+
+```bash
+git clone https://github.com/mkumarsid/QueryWeather.git
+cd QueryWeather
+```
+
+### Setup using Python Script (Cross-Platform)
+
+Run this once to install Poetry, create a virtual environment, and install dependencies:
+
+````bash
+python setup_env.py
+
+
+# Activate the environment
+source .venv/bin/activate   # macOS/Linux
+.venv\Scripts\activate      # Windows
+
+# Run the app locally
+poetry run python scripts/run_local.py
+
+
+#### Access Services
 
 - 🚀 FastAPI Docs: http://localhost:8000/docs
 - 📈 Streamlit UI: http://localhost:8501
 
----
 
 ### 🔑 API Configuration
 
@@ -115,7 +102,7 @@ Or make it configurable via `.env` support if needed.
 
 ### ✅ TODOs
 
-- [ ] Add CRON / Prefect job for scheduled ingestion
+- [ ] Add CRON entry in github action job for scheduled ingestion
 - [ ] Improve error logging for ingestion
 - [ ] Push Docker image to GitHub Container Registry
 - [ ] Add authentication for Streamlit
@@ -127,3 +114,4 @@ Or make it configurable via `.env` support if needed.
 Have suggestions or want to contribute? Feel free to fork and submit a pull request.
 
 ---
+````
