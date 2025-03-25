@@ -24,7 +24,7 @@ jobs:
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Install dependencies with Poetry
-        run: poetry install
+        run: poetry install --no-root
 
       - name: Run ingestion script
         run: poetry run python ingestion/ingest_openweather.py
