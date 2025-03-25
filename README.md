@@ -32,8 +32,6 @@ docker-compose logs -f  # In separate terminal
 
 3. Setup using Python Script (Cross-Platform)
 
-4. Run this once to install Poetry, create a virtual environment, and install dependencies:
-
 ```bash
 python setup_env.py
 
