@@ -4,48 +4,35 @@ A modern weather monitoring system built using **FastAPI**, **Streamlit**, and *
 
 > Real-time and historical weather metrics dashboard with interactive visualizations.
 
----
+![Query Weather Platform](images/QueryWeatherDesign.png "Modern Data Stack!")
 
-## Features
+# Pre-requisites
 
-- Fetch live weather data via OpenWeatherMap API
-- Store structured weather data in DuckDB
-- Query metrics like temperature, humidity, windspeed (with stats & history)
-- Visualize data via an interactive Streamlit dashboard
-- Dockerized for ease of deployment
+- [Python 3.11](https://www.python.org/downloads/)
+- [Open Weather API Key](https://home.openweathermap.org/api_keys)
+- [Docker desktop](https://docs.docker.com/desktop/install/)
+- [FastAPI](https://fastapi.tiangolo.com/)
+- [Streamlit](https://streamlit.io/)
 
----
+# How to Run
 
-## Tech Stack
-
-- **Backend**: FastAPI
-- **Frontend**: Streamlit
-- **Database**: DuckDB
-- **API Source**: OpenWeatherMap
-- **Deployment**: Docker + Docker Compose
-- **Packaging**: Poetry
-
-## How to Run
-
-### Clone the Repo
+1. Clone the Repo
 
 ```bash
 git clone https://github.com/mkumarsid/QueryWeather.git
 cd QueryWeather
-
 ```
 
-### Run with Docker (Recommended)
-
-#### Build and Run
+2. Run with Docker (Recommended)
 
 ```bash
 docker-compose up --build
+docker-compose logs -f  # In separate terminal
 ```
 
-### Setup using Python Script (Cross-Platform)
+3. Setup using Python Script (Cross-Platform)
 
-Run this once to install Poetry, create a virtual environment, and install dependencies:
+4. Run this once to install Poetry, create a virtual environment, and install dependencies:
 
 ```bash
 python setup_env.py
@@ -59,7 +46,12 @@ source .venv/bin/activate   # macOS/Linux
 poetry run python scripts/run_local.py
 ```
 
-#### Access Services
+# Access Services
 
-- 🚀 FastAPI Docs: http://localhost:8000/docs
-- 📈 Streamlit UI: http://localhost:8501
+1. API - http://localhost:8000/docs
+
+   ![FastAPI](images/fastapi.png "FastAPI")
+
+2. Web UI (Streamlit App) - http://localhost:8501
+
+   ![Streamlit App](images/streamlit.png "Streamlit App")
