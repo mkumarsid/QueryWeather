@@ -26,6 +26,9 @@ jobs:
       - name: Install dependencies with Poetry
         run: poetry install --no-root
 
+      - name: Initialize database
+        run: PYTHONPATH=. poetry run python scripts/init_db.py
+
       - name: Run ingestion script
         run: poetry run python ingestion/ingest_openweather.py
         env:
