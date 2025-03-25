@@ -50,8 +50,8 @@ poetry run python scripts/run_local.py
 
 1. API - http://localhost:8000/docs
 
-   ![FastAPI](images/fastapi.png "FastAPI")
+   ![FastAPI](images/fastapi.jpg "FastAPI")
 
 2. Web UI (Streamlit App) - http://localhost:8501
 
-   ![Streamlit App](images/streamlit.png "Streamlit App")
+   ![Streamlit App](images/streamlit.jpg "Streamlit App")
