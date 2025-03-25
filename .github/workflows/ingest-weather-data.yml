@@ -5,6 +5,10 @@ on:
   #   - cron: "*/5 * * * *" # every 5 minutes (UTC)
   workflow_dispatch: # allow manual trigger
 
+env:
+  OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+
+
 jobs:
   ingest:
     runs-on: ubuntu-latest

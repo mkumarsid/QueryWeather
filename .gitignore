@@ -36,12 +36,14 @@ htmlcov/
 
 # Logs
 *.log
+.env
 
 # DuckDB or local DBs
 *.db
 *.sqlite
 *.parquet
 *.duckdb
+*.db.wal
 
 # VSCode debug config
 .vscode/launch.json

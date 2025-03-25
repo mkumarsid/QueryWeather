@@ -2,10 +2,14 @@ from datetime import datetime, timezone
 
 import requests
 
-# API details
-API_KEY = "5f416c6f2c4d94b658cb2be255c8c8c0"
+
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+API_KEY = os.getenv("OPENWEATHER_API_KEY")
 CITY = "Dublin"
-UNITS = "metric"
+COUNTRY = "Ireland"
 
 url = f"https://api.openweathermap.org/data/2.5/weather?q={CITY}&units={UNITS}&appid={API_KEY}"
 

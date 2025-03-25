@@ -11,6 +11,14 @@ from app.models import WeatherMetric
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+API_KEY = os.getenv("OPENWEATHER_API_KEY")
+CITY = "Dublin"
+COUNTRY = "Ireland"
+
 class WeatherIngestor:
     def __init__(self, api_key: str, city: str, country: str, units: str = "metric"):
         # Basic input sanitization: strip whitespace from parameters
@@ -120,10 +128,6 @@ class WeatherIngestor:
 
 if __name__ == "__main__":
     # Use your public API key and desired parameters
-    API_KEY = "5f416c6f2c4d94b658cb2be255c8c8c0"  # Replace with your actual key
-    CITY = "Dublin"
-    COUNTRY = "Ireland"
-
     ingestor = WeatherIngestor(
         api_key=API_KEY, city=CITY, country=COUNTRY, units="metric"
     )

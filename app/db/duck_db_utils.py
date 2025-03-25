@@ -1,12 +1,15 @@
 from datetime import datetime, timedelta
-
 import duckdb
 import pandas as pd
-
 from app.models import WeatherMetric
 from utils.logger_service import get_logger
+import os
+from dotenv import load_dotenv
 
 logger = get_logger(__name__)
+
+load_dotenv()
+API_KEY = os.getenv("OPENWEATHER_API_KEY")
 
 
 class WeatherDB:
@@ -125,7 +128,7 @@ class WeatherDB:
         for location in cities:
             try:
                 ingestor = WeatherIngestor(
-                    api_key="5f416c6f2c4d94b658cb2be255c8c8c0",
+                    api_key=API_KEY,
                     city=location["city"],
                     country=location["country"],
                 )

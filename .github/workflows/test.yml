@@ -1,5 +1,9 @@
 name: Testing
 
+
+env:
+  OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+
 on:
   push:
     branches: [main]
