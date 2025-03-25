@@ -27,6 +27,9 @@ jobs:
       - name: Install dependencies with Poetry
         run: poetry install --no-root
 
+      - name: Initialize database
+        run: PYTHONPATH=. poetry run python scripts/init_db.py
+    
       - name: Run tests with pytest
         run: poetry run pytest tests/
         env:
