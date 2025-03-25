@@ -6,17 +6,17 @@ A modern weather monitoring system built using **FastAPI**, **Streamlit**, and *
 
 ---
 
-## Features
+## 🚀 Features
 
-- Fetch live weather data via OpenWeatherMap API
-- Store structured weather data in DuckDB
-- Query metrics like temperature, humidity, windspeed (with stats & history)
-- Visualize data via an interactive Streamlit dashboard
-- Dockerized for ease of deployment
+- 🛰️ Fetch live weather data via OpenWeatherMap API
+- 📦 Store structured weather data in DuckDB (embedded)
+- 🔍 Query metrics like temperature, humidity, windspeed (with stats & history)
+- 📊 Visualize data via an interactive Streamlit dashboard
+- 🐳 Dockerized for ease of deployment
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 - **Backend**: FastAPI
 - **Frontend**: Streamlit
@@ -25,7 +25,15 @@ A modern weather monitoring system built using **FastAPI**, **Streamlit**, and *
 - **Deployment**: Docker + Docker Compose
 - **Packaging**: Poetry
 
-## How to Run
+---
+
+## 🧱 Project Structure
+
+QueryWeather/ ├── app/ # FastAPI backend ├── uinterface/ # Streamlit frontend ├── ingestion/ # Weather ingestion logic ├── data/ # CSV & database files ├── Dockerfile ├── docker-compose.yml ├── pyproject.toml
+
+---
+
+## Local Setup (with Poetry)
 
 ### Clone the Repo
 
@@ -35,7 +43,7 @@ cd QueryWeather
 
 ```
 
-### Run with Docker (Recommended)
+### 🐳 Run with Docker (Recommended)
 
 #### Build and Run
 

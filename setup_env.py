@@ -1,10 +1,12 @@
-import subprocess
-import sys
 import os
 import shutil
+import subprocess
+import sys
+
 
 def is_poetry_installed():
     return shutil.which("poetry") is not None
+
 
 def install_poetry():
     print("📦 Installing Poetry...")
@@ -16,9 +18,11 @@ def install_poetry():
     subprocess.run(install_cmd, shell=True, check=True)
     print("✅ Poetry installed successfully!")
 
+
 def run_command(command):
     print(f"▶️ Running: {command}")
     subprocess.run(command, shell=True, check=True)
+
 
 def main():
     if not is_poetry_installed():
@@ -34,6 +38,7 @@ def main():
 
     print("\n🚀 Now you can run your local script:")
     print("   poetry run python scripts/run_local.py")
+
 
 if __name__ == "__main__":
     main()

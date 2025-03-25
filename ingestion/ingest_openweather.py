@@ -1,11 +1,15 @@
-import requests
-import sys
 import os
-from app.db.duck_db_utils import WeatherDB, WeatherMetric
+import sys
 from datetime import datetime, timezone
+
+import requests
+
+from app.db.duck_db_utils import WeatherDB
+from app.models import WeatherMetric
 
 # Add project root to path so that the app module is found
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 
 class WeatherIngestor:
     def __init__(self, api_key: str, city: str, country: str, units: str = "metric"):
@@ -18,16 +22,17 @@ class WeatherIngestor:
         self.current_url = f"https://api.openweathermap.org/data/2.5/weather?q={self.city}&units={self.units}&appid={self.api_key}"
         self.forecast_url = f"https://api.openweathermap.org/data/2.5/forecast?q={self.city}&units={self.units}&appid={self.api_key}"
 
-
     def ingest_current_weather(self):
         print(f"🌐 Fetching Current URL: {self.current_url} for City {self.city}")
         response = requests.get(self.current_url)
         if response.status_code != 200:
-            print(f"❌ Failed to fetch current weather data: {response.status_code} - {response.text}")
+            print(
+                f"❌ Failed to fetch current weather data: {response.status_code} - {response.text}"
+            )
             return
 
         current = response.json()
-    
+
         # ✅ Use API 'dt' field (UTC timestamp)
         dt = datetime.fromtimestamp(current["dt"], tz=timezone.utc)
 
@@ -44,18 +49,16 @@ class WeatherIngestor:
         wind = current.get("wind", {})
         weather_desc = current.get("weather", [{}])[0].get("description", "N/A")
 
-        station_id = f"{self.city}_{int(current['dt'])}"  # Use city + timestamp instead of lat/lon
-
+        print("Inhest current weather")
         metric = WeatherMetric(
             station_id=f"{self.city.upper()}_{current['coord']['lat']}_{current['coord']['lon']}",
-            #station_id = f"{self.city}_{int(current['dt'])}",
             city=self.city,
             country=self.country,
             Datetime=dt,
             Temperature=main.get("temp"),
             Humidity=main.get("humidity"),
             WindSpeed=wind.get("speed"),
-            WeatherDescription=weather_desc
+            WeatherDescription=weather_desc,
         )
 
         self.db.insert_metrics(metric)
@@ -68,7 +71,9 @@ class WeatherIngestor:
         response = requests.get(self.forecast_url)
 
         if response.status_code != 200:
-            raise Exception(f"❌ Failed to fetch forecast data: {response.status_code} - {response.text}")
+            raise Exception(
+                f"❌ Failed to fetch forecast data: {response.status_code} - {response.text}"
+            )
 
         weather_data = response.json()
         entries = weather_data.get("list", [])
@@ -85,7 +90,8 @@ class WeatherIngestor:
                 f"SELECT COUNT(*) FROM weather WHERE Datetime = '{dt}'"
             ).fetchone()[0]
             if exists:
-                continue
+                print(f"⏭️ Skipping forecast weather — entry already exists for {dt}")
+                return
 
             main = entry["main"]
             wind = entry.get("wind", {})
@@ -99,12 +105,11 @@ class WeatherIngestor:
                 Temperature=main.get("temp"),
                 Humidity=main.get("humidity"),
                 WindSpeed=wind.get("speed"),
-                WeatherDescription=weather_desc
+                WeatherDescription=weather_desc,
             )
             self.db.insert_metrics(metric)
             print(f"✅ Ingested forecast entry at {dt.isoformat()} for {self.city}")
 
-    
     def run(self):
         print("🚀 Starting ingestion pipeline for current weather data...")
         self.ingest_current_weather()
@@ -112,11 +117,14 @@ class WeatherIngestor:
         self.ingest_forecast()
         self.db.close()
 
+
 if __name__ == "__main__":
     # Use your public API key and desired parameters
     API_KEY = "5f416c6f2c4d94b658cb2be255c8c8c0"  # Replace with your actual key
     CITY = "Dublin"
     COUNTRY = "Ireland"
-    
-    ingestor = WeatherIngestor(api_key=API_KEY, city=CITY, country=COUNTRY, units="metric")
+
+    ingestor = WeatherIngestor(
+        api_key=API_KEY, city=CITY, country=COUNTRY, units="metric"
+    )
     ingestor.run()

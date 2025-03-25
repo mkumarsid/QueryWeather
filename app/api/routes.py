@@ -1,100 +1,58 @@
-
-import logging
-from fastapi import APIRouter, Query, HTTPException
-from pydantic import BaseModel
+from datetime import date, timedelta
 from typing import List, Optional
-from datetime import date
-from app.db.duck_db_utils import WeatherDB, WeatherMetric
-from fastapi import APIRouter, Query, HTTPException, Body
-from datetime import timedelta
 
+from fastapi import APIRouter, Body, HTTPException, Query
+from pydantic import BaseModel
 
-# Configure logging: set level, format, and optionally file handler
-logging.basicConfig(
-    level=logging.INFO, 
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-logger = logging.getLogger(__name__)
+from app.db.duck_db_utils import WeatherDB
+from app.models import MetricStatRequest, SensorQuery, WeatherMetric
 
+from utils.logger_service import get_logger
+logger = get_logger(__name__)
+
+# API Router class 
 router = APIRouter()
+
+# Duck DB connector class
 db = WeatherDB()
-from pydantic import BaseModel, Field
-# Allowed metrics in your DuckDB schema
-ALLOWED_METRICS = {"Temperature", "Humidity", "WindSpeed"}
 
-class MetricQuery(BaseModel):
-    metrics: List[str] = Field(example=["Temperature", "Humidity"])
-    start_date: Optional[date] = Field(example="2025-03-20")
-    end_date: Optional[date] = Field(example="2025-03-21")
+@router.post("/sensors")
+def get_sensors(payload: SensorQuery):
+    logger.info(f"Fetching sensors for: {payload.station_ids}")
+    return db.get_sensor_details(station_ids=payload.station_ids).to_dict(
+        orient="records"
+    )
 
-class StatQuery(BaseModel):
-    metric: str = Field(example="Temperature")
-    stat: str = Field(example="max")
-    start_date: Optional[date] = Field(example="2025-03-18")
-    end_date: Optional[date] = Field(example="2025-03-21")
 
-@router.get("/sensors")
-def get_sensors(station_ids: Optional[List[str]] = Query(default=None)):
-    return db.get_sensor_details(station_ids).to_dict(orient="records")
-
-@router.get("/metrics/average")
-def get_average_metrics(
-    metrics: List[str] = Query(..., example=["Temperature", "Humidity", "WindSpeed"]),
-    start_date: Optional[date] = Query(None),
-    end_date: Optional[date] = Query(None),
-):
+@router.post("/metrics/stat")
+def get_metric_stat(payload: MetricStatRequest):
+    logger.info(f"Fetching {payload.stat} stats for: {payload.metrics}")
+    
+    for metric in payload.metrics:
+        if metric not in {"Temperature", "Humidity", "WindSpeed"}:
+            logger.warning(f"Invalid metric requested: {metric}")
+            raise HTTPException(
+            status_code=400, detail=f"Invalid metric '{metric}'"
+            )
     try:
-        for metric in metrics:
-            if metric not in ALLOWED_METRICS:
-                raise HTTPException(status_code=400, detail=f"Invalid metric '{metric}'. Allowed: {ALLOWED_METRICS}")
-        result = db.get_metrics_average(metrics, start_date, end_date)
-        return result.to_dict(orient="records")
+
+        results = []
+        for metric in payload.metrics:
+            df = db.get_metric_stats(
+                metric=metric,
+                stat=payload.stat,
+                start_date=payload.start_date,
+                end_date=payload.end_date,
+                city=payload.city,
+            )
+            results.append(df)
+
+        from pandas import concat
+
+        combined = concat(results, axis=1)
+        combined = combined.loc[:, ~combined.columns.duplicated()]
+        return combined.to_dict(orient="records")
+
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
-
-@router.get("/metrics/data")
-def get_raw_metrics(
-    metrics: List[str] = Query(..., example=["Temperature", "Humidity", "WindSpeed"]),
-    start_date: Optional[date] = Query(None),
-    end_date: Optional[date] = Query(None)
-):
-    try:
-        for metric in metrics:
-            if metric not in ALLOWED_METRICS:
-                raise HTTPException(status_code=400, detail=f"Invalid metric '{metric}'")
-        from datetime import datetime, timedelta, timezone
-
-        if not end_date:
-            end_date = datetime.now(timezone.utc).date()
-        if not start_date:
-            start_date = end_date - timedelta(days=30)
-
-        result = db.get_raw_metrics(metrics, start_date, end_date)
-        return result.to_dict(orient="records")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
-
-
-@router.get("/metrics/stat")
-def get_metric_stat(
-    metric: str = Query(..., example=["Temperature", "Humidity", "WindSpeed"]),
-    stat: str = Query(..., example="max"),
-    start_date: Optional[date] = Query(None),
-    end_date: Optional[date] = Query(None),
-):
-    try:
-        if metric not in ALLOWED_METRICS:
-            raise HTTPException(status_code=400, detail=f"Invalid metric '{metric}'. Allowed: {ALLOWED_METRICS}")
-        result = db.get_metric_stats(metric, stat, start_date, end_date)
-        return result.to_dict(orient="records")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
-
-@router.post("/metrics")
-def post_weather_metric(metric: WeatherMetric):
-    try:
-        db.insert_metrics(metric)
-        return {"status": "success", "message": "Metric inserted"}
-    except Exception as e:
-        print("❌ Error in /metrics:", str(e))
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+        logger.exception("Unexpected error during /metrics/stat processing")
+        raise HTTPException(status_code=500, detail="Internal Server Error")

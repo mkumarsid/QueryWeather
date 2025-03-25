@@ -1,5 +1,7 @@
-import requests
 from datetime import datetime
+
+import requests
+
 
 def fetch_weather(city: str):
     url = f"https://wttr.in/{city}?format=j1"
@@ -31,6 +33,7 @@ def fetch_weather(city: str):
         print(f"  💧 Humidity: {hour['humidity']}%")
         print(f"  🌬️ Wind: {hour['windspeedKmph']} km/h")
         print(f"  🌤️ Desc: {hour['weatherDesc'][0]['value']}")
+
 
 if __name__ == "__main__":
     fetch_weather("Dublin")
