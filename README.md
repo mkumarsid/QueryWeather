@@ -23,14 +23,23 @@ git clone https://github.com/mkumarsid/QueryWeather.git
 cd QueryWeather
 ```
 
-2. Run with Docker (Recommended)
+2. Copy Open weather API key to .env
+
+```bash
+cp env.example .env
+```
+
+3. Run with Docker (Recommended)
 
 ```bash
 docker-compose up --build
-docker-compose logs -f  # In separate terminal
 ```
 
-3. Setup using Python Script (Cross-Platform)
+```bash
+docker-compose logs -f
+```
+
+4. Setup using Python Script (Cross-Platform)
 
 ```bash
 python setup_env.py
