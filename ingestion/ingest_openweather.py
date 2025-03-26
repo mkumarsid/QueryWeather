@@ -22,10 +22,10 @@ COUNTRY = "Ireland"
 class WeatherIngestor:
     def __init__(self, api_key: str, city: str, country: str, units: str = "metric"):
         # Basic input sanitization: strip whitespace from parameters
-        self.api_key = api_key.strip()
-        self.city = city.strip()
-        self.country = country.strip()
-        self.units = units.strip()
+        self.api_key = (api_key or "").strip()
+        self.city = (city or "").strip()
+        self.country = (country or "").strip()
+        self.units = (units or "").strip()
         self.db = WeatherDB()
         self.current_url = f"https://api.openweathermap.org/data/2.5/weather?q={self.city}&units={self.units}&appid={self.api_key}"
         self.forecast_url = f"https://api.openweathermap.org/data/2.5/forecast?q={self.city}&units={self.units}&appid={self.api_key}"
