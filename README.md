@@ -21,7 +21,7 @@ git clone https://github.com/mkumarsid/QueryWeather.git
 cd QueryWeather
 ```
 
-2. Copy Open weather API key to .env
+2. Copy Open Weather API key to .env
 
 ```bash
 cp env.example .env
@@ -42,16 +42,12 @@ docker-compose logs -f
 ```bash
 python setup_env.py
 
-
 # Activate the environment
 source .venv/bin/activate   # macOS/Linux
 .venv\Scripts\activate      # Windows
 
 # Run the app locally
 poetry run python scripts/run_local.py
-
-# Running tests locally
-poetry run pytest tests/
 ```
 
 # Access Services
