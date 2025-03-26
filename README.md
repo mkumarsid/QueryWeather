@@ -10,9 +10,7 @@ A modern weather monitoring system built using **FastAPI**, **Streamlit**, and *
 
 - [Python 3.11](https://www.python.org/downloads/)
 - [Open Weather API Key](https://home.openweathermap.org/api_keys)
-- [Docker desktop](https://docs.docker.com/desktop/install/)
-- [FastAPI](https://fastapi.tiangolo.com/)
-- [Streamlit](https://streamlit.io/)
+- [Docker desktop](https://docs.docker.com/desktop/setup/install/windows-install/)
 
 # How to Run
 
@@ -51,6 +49,9 @@ source .venv/bin/activate   # macOS/Linux
 
 # Run the app locally
 poetry run python scripts/run_local.py
+
+# Running tests locally
+poetry run pytest tests/
 ```
 
 # Access Services
